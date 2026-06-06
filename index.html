@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Grand Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #f5efe0;
+    --parchment-dark: #e8ddc8;
+    --parchment-deeper: #d4c5a9;
+    --ink: #2c1f0e;
+    --ink-light: #4a3520;
+    --ink-faded: #7a6248;
+    --gold: #b8922a;
+    --gold-light: #d4a843;
+    --gold-pale: #e8d5a0;
+    --crimson: #7a1f1f;
+    --crimson-light: #9e2c2c;
+    --forest: #2a4a2a;
+    --cream: #faf6ec;
+    --shadow: rgba(44, 31, 14, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    cursor: default;
+  }
+
+  /* Texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--ink);
+    border-bottom: 3px solid var(--gold);
+    padding: 0 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-logo-ornament {
+    font-size: 1.6rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--parchment-deeper);
+    text-decoration: none;
+    transition: color 0.2s;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+
+  .nav-links a:hover { color: var(--gold-light); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  .nav-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(184,146,42,0.3);
+    padding: 7px 16px;
+  }
+
+  .nav-search input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--parchment);
+    font-family: 'EB Garamond', serif;
+    font-size: 0.9rem;
+    width: 180px;
+  }
+
+  .nav-search input::placeholder { color: var(--ink-faded); }
+  .nav-search-icon { color: var(--gold); font-size: 1rem; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    background: var(--ink);
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 4rem 2rem;
+  }
+
+  .hero-bg-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(184,146,42,0.04) 60px, rgba(184,146,42,0.04) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(184,146,42,0.04) 60px, rgba(184,146,42,0.04) 61px);
+    opacity: 0.8;
+  }
+
+  .hero-border {
+    position: absolute;
+    inset: 24px;
+    border: 1px solid rgba(184,146,42,0.25);
+    pointer-events: none;
+  }
+
+  .hero-border::before, .hero-border::after {
+    content: '✦';
+    position: absolute;
+    color: var(--gold);
+    font-size: 1rem;
+    opacity: 0.6;
+  }
+
+  .hero-border::before { top: -10px; left: 50%; transform: translateX(-50%); }
+  .hero-border::after { bottom: -10px; left: 50%; transform: translateX(-50%); }
+
+  .hero-corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0.4;
+  }
+
+  .hero-corner.tl { top: 24px; left: 24px; border-width: 2px 0 0 2px; }
+  .hero-corner.tr { top: 24px; right: 24px; border-width: 2px 2px 0 0; }
+  .hero-corner.bl { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; }
+  .hero-corner.br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
+
+  .hero-content {
+    position: relative;
+    text-align: center;
+    max-width: 800px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--parchment);
+    margin-bottom: 0.5rem;
+    letter-spacing: -1px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--parchment-deeper);
+    margin-bottom: 2.5rem;
+    opacity: 0.8;
+  }
+
+  .hero-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    color: var(--gold);
+    font-size: 0.8rem;
+    opacity: 0.6;
+  }
+
+  .hero-divider::before, .hero-divider::after {
+    content: '';
+    width: 80px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+  }
+
+  .hero-stat {
+    text-align: center;
+  }
+
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .hero-stat-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--parchment-deeper);
+    opacity: 0.7;
+  }
+
+  /* ── BOOK COVERS BANNER ── */
+  .covers-banner {
+    background: var(--ink-light);
+    border-bottom: 3px solid var(--gold);
+    padding: 2.5rem 3rem;
+    overflow: hidden;
+  }
+
+  .covers-banner-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .covers-banner-label::before, .covers-banner-label::after {
+    content: '◆';
+    font-size: 0.5rem;
+    opacity: 0.6;
+  }
+
+  .covers-scroll {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cover-item {
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+
+  .cover-item:hover { transform: translateY(-8px) scale(1.03); }
+
+  .cover-item img {
+    width: 110px;
+    height: 165px;
+    object-fit: cover;
+    display: block;
+    box-shadow: 4px 6px 20px rgba(0,0,0,0.5);
+    border: 1px solid rgba(184,146,42,0.3);
+  }
+
+  .cover-item-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(44,31,14,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .cover-item:hover .cover-item-overlay { opacity: 1; }
+
+  .cover-item-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    border: 1px solid var(--gold);
+    padding: 6px 14px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cover-item-btn:hover { background: var(--gold); color: var(--ink); }
+
+  .cover-item-label {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(44,31,14,0.95), transparent);
+    padding: 20px 8px 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    color: var(--gold-pale);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-heading {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-heading h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0.5;
+  }
+
+  .section-ornament {
+    color: var(--gold);
+    font-size: 1rem;
+    opacity: 0.7;
+  }
+
+  /* ── FEATURED BOOK ── */
+  .featured-book {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2.5rem;
+    background: var(--cream);
+    border: 1px solid var(--parchment-deeper);
+    border-left: 4px solid var(--gold);
+    padding: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: 4px 4px 20px var(--shadow);
+    position: relative;
+  }
+
+  .featured-book::before {
+    content: 'EDITOR\'S CHOICE';
+    position: absolute;
+    top: -12px; left: 2rem;
+    background: var(--gold);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    font-weight: 600;
+  }
+
+  .featured-cover {
+    position: relative;
+  }
+
+  .featured-cover img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    box-shadow: 6px 6px 24px rgba(44,31,14,0.3);
+    border: 1px solid var(--parchment-deeper);
+    display: block;
+  }
+
+  .featured-cover-spine {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 12px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.3), transparent);
+  }
+
+  .featured-genre {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+
+  .featured-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  .featured-author {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--ink-faded);
+    margin-bottom: 1.25rem;
+  }
+
+  .featured-desc {
+    font-family: 'EB Garamond', serif;
+    font-size: 1rem;
+    color: var(--ink-light);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .featured-meta {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .meta-item {
+    text-align: center;
+  }
+
+  .meta-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--crimson);
+    display: block;
+  }
+
+  .meta-key {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink-faded);
+  }
+
+  .btn-read {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--cream);
+    background: var(--ink);
+    border: none;
+    padding: 12px 32px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-right: 1rem;
+  }
+
+  .btn-read:hover { background: var(--crimson); }
+
+  .btn-save {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--ink-faded);
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-save:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── BOOK GRID ── */
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .book-card {
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+
+  .book-card:hover { transform: translateY(-6px); }
+
+  .book-card-cover {
+    position: relative;
+    margin-bottom: 1rem;
+    box-shadow: 4px 6px 18px var(--shadow);
+  }
+
+  .book-card-cover img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid var(--parchment-deeper);
+  }
+
+  .book-card-spine {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 10px;
+    background: linear-gradient(90deg, rgba(44,31,14,0.25), transparent);
+  }
+
+  .book-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(44,31,14,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 2px solid var(--gold);
+  }
+
+  .book-card:hover .book-card-overlay { opacity: 1; }
+
+  .book-card-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    border: 1px solid var(--gold);
+    padding: 8px 18px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .book-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 3px;
+  }
+
+  .book-card-author {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--ink-faded);
+    margin-bottom: 6px;
+  }
+
+  .book-card-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stars { color: var(--gold); font-size: 0.75rem; letter-spacing: 1px; }
+  .rating-num { font-family: 'EB Garamond', serif; font-size: 0.85rem; color: var(--ink-faded); }
+
+  /* ── SIDEBAR ── */
+  .sidebar { position: relative; }
+
+  .sidebar-widget {
+    background: var(--cream);
+    border: 1px solid var(--parchment-deeper);
+    border-top: 3px solid var(--gold);
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+    box-shadow: 2px 2px 12px var(--shadow);
+  }
+
+  .widget-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .widget-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--parchment-deeper);
+  }
+
+  /* Reading queue */
+  .queue-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--parchment-deeper);
+  }
+
+  .queue-item:last-child { border-bottom: none; }
+
+  .queue-cover img {
+    width: 44px;
+    height: 62px;
+    object-fit: cover;
+    display: block;
+    box-shadow: 2px 3px 8px var(--shadow);
+    border: 1px solid var(--parchment-deeper);
+  }
+
+  .queue-info { flex: 1; }
+
+  .queue-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .queue-author {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--ink-faded);
+    margin-bottom: 8px;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: var(--parchment-deeper);
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -4px; top: -4px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--cream);
+  }
+
+  .progress-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    color: var(--ink-faded);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  /* Categories */
+  .category-list { list-style: none; }
+
+  .category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--parchment-deeper);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .category-item:last-child { border-bottom: none; }
+  .category-item:hover .cat-name-text { color: var(--crimson); }
+
+  .cat-left { display: flex; align-items: center; gap: 10px; }
+  .cat-icon { font-size: 1rem; }
+
+  .cat-name-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    transition: color 0.2s;
+  }
+
+  .cat-count-badge {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.75rem;
+    color: var(--ink-faded);
+    background: var(--parchment-dark);
+    padding: 1px 8px;
+    border: 1px solid var(--parchment-deeper);
+  }
+
+  /* Quote block */
+  .quote-block {
+    background: var(--ink);
+    color: var(--parchment);
+    padding: 2rem;
+    border-left: 4px solid var(--gold);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quote-block::before {
+    content: '\201C';
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem;
+    color: var(--gold);
+    opacity: 0.1;
+    position: absolute;
+    top: -20px; left: 10px;
+    line-height: 1;
+  }
+
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .quote-source {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    border-top: 3px solid var(--gold);
+    padding: 3rem;
+  }
+
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(184,146,42,0.2);
+    margin-bottom: 2rem;
+  }
+
+  .footer-brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-brand-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--ink-faded);
+    line-height: 1.6;
+  }
+
+  .footer-col-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .footer-links { list-style: none; }
+
+  .footer-links li {
+    margin-bottom: 8px;
+  }
+
+  .footer-links a {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.95rem;
+    color: var(--ink-faded);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--parchment); }
+
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-copy {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--ink-faded);
+    font-style: italic;
+  }
+
+  .footer-ornament {
+    color: var(--gold);
+    font-size: 1rem;
+    opacity: 0.5;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-content { animation: fadeUp 0.8s ease forwards; }
+  .covers-scroll .cover-item { animation: fadeUp 0.6s ease forwards; }
+  .covers-scroll .cover-item:nth-child(1) { animation-delay: 0.05s; }
+  .covers-scroll .cover-item:nth-child(2) { animation-delay: 0.1s; }
+  .covers-scroll .cover-item:nth-child(3) { animation-delay: 0.15s; }
+  .covers-scroll .cover-item:nth-child(4) { animation-delay: 0.2s; }
+  .covers-scroll .cover-item:nth-child(5) { animation-delay: 0.25s; }
+  .covers-scroll .cover-item:nth-child(6) { animation-delay: 0.3s; }
+  .covers-scroll .cover-item:nth-child(7) { animation-delay: 0.35s; }
+  .covers-scroll .cover-item:nth-child(8) { animation-delay: 0.4s; }
+
+  @media (max-width: 900px) {
+    .main-layout { grid-template-columns: 1fr; }
+    .featured-book { grid-template-columns: 140px 1fr; }
+    .nav-links { display: none; }
+    .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-stats { gap: 1.5rem; }
+    .covers-scroll { gap: 1rem; }
+    .cover-item img { width: 85px; height: 128px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="nav-logo-ornament">⚜</span>
+    The Grand Library
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Collections</a></li>
+    <li><a href="#">Catalogue</a></li>
+    <li><a href="#">Reading Room</a></li>
+    <li><a href="#">Archives</a></li>
+  </ul>
+  <div class="nav-search">
+    <span class="nav-search-icon">🔍</span>
+    <input type="text" placeholder="Search the catalogue…">
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-border"></div>
+  <div class="hero-corner tl"></div>
+  <div class="hero-corner tr"></div>
+  <div class="hero-corner bl"></div>
+  <div class="hero-corner br"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Est. MDCCCXLII · The Grand Library</div>
+    <h1 class="hero-title">A World of<br><em>Stories Awaits</em></h1>
+    <p class="hero-subtitle">Curated collections for the discerning reader</p>
+    <div class="hero-divider">✦</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">4.2M</span>
+        <span class="hero-stat-label">Volumes</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">180K</span>
+        <span class="hero-stat-label">Members</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">12</span>
+        <span class="hero-stat-label">Collections</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">∞</span>
+        <span class="hero-stat-label">Knowledge</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOK COVERS BANNER — TOP -->
+<div class="covers-banner">
+  <div class="covers-banner-label">Most Beloved Books of Our Time</div>
+  <div class="covers-scroll">
+
+    <div class="cover-item">
+      <img src="https://i.pinimg.com/1200x/87/64/8c/87648c9afef477df149118a4f964ea9d.jpg" alt="The Great Gatsby">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">The Great Gatsby</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780061743528-L.jpg" alt="To Kill a Mockingbird">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">To Kill a Mockingbird</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780439708180-L.jpg" alt="Harry Potter">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">Harry Potter</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg" alt="1984">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">1984</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg" alt="Atomic Habits">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">Atomic Habits</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg" alt="Sapiens">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">Sapiens</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg" alt="The Midnight Library">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">The Midnight Library</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780441013593-L.jpg" alt="Dune">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">Dune</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780061122415-L.jpg" alt="The Alchemist">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">The Alchemist</div>
+    </div>
+
+    <div class="cover-item">
+      <img src="https://covers.openlibrary.org/b/isbn/9780385737951-L.jpg" alt="The Fault in Our Stars">
+      <div class="cover-item-overlay"><button class="cover-item-btn">Open</button></div>
+      <div class="cover-item-label">The Fault in Our Stars</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-layout">
+  <main>
+
+    <!-- FEATURED -->
+    <div class="section-heading">
+      <h2>Editor's Choice</h2>
+      <div class="section-rule"></div>
+      <span class="section-ornament">✦</span>
+    </div>
+
+    <div class="featured-book">
+      <div class="featured-cover">
+        <img src="https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg" alt="Sapiens cover">
+        <div class="featured-cover-spine"></div>
+      </div>
+      <div class="featured-info">
+        <div class="featured-genre">Non-Fiction · History</div>
+        <div class="featured-title">Sapiens</div>
+        <div class="featured-author">Yuval Noah Harari, 2011</div>
+        <p class="featured-desc">A sweeping narrative of humankind's entire history — from the Stone Age through the modern era — exploring how Homo sapiens came to dominate the planet. A breathtaking work that challenges everything we thought we knew about being human.</p>
+        <div class="featured-meta">
+          <div class="meta-item">
+            <span class="meta-val">4.9</span>
+            <span class="meta-key">Rating</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-val">443</span>
+            <span class="meta-key">Pages</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-val">18M+</span>
+            <span class="meta-key">Copies Sold</span>
+          </div>
+        </div>
+        <button class="btn-read">Read Now</button>
+        <button class="btn-save">+ Bookmark</button>
+      </div>
+    </div>
+
+    <!-- POPULAR BOOKS -->
+    <div class="section-heading">
+      <h2>Popular This Season</h2>
+      <div class="section-rule"></div>
+      <span class="section-ornament">✦</span>
+    </div>
+
+    <div class="book-grid">
+
+      <div class="book-card">
+        <div class="book-card-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg" alt="1984">
+          <div class="book-card-spine"></div>
+          <div class="book-card-overlay"><button class="book-card-btn">Read</button></div>
+        </div>
+        <div class="book-card-title">1984</div>
+        <div class="book-card-author">George Orwell</div>
+        <div class="book-card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-card-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg" alt="The Great Gatsby">
+          <div class="book-card-spine"></div>
+          <div class="book-card-overlay"><button class="book-card-btn">Read</button></div>
+        </div>
+        <div class="book-card-title">The Great Gatsby</div>
+        <div class="book-card-author">F. Scott Fitzgerald</div>
+        <div class="book-card-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.7</span></div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-card-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780439708180-L.jpg" alt="Harry Potter">
+          <div class="book-card-spine"></div>
+          <div class="book-card-overlay"><button class="book-card-btn">Read</button></div>
+        </div>
+        <div class="book-card-title">Harry Potter & the Sorcerer's Stone</div>
+        <div class="book-card-author">J.K. Rowling</div>
+        <div class="book-card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.9</span></div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-card-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780061743528-L.jpg" alt="To Kill a Mockingbird">
+          <div class="book-card-spine"></div>
+          <div class="book-card-overlay"><button class="book-card-btn">Read</button></div>
+        </div>
+        <div class="book-card-title">To Kill a Mockingbird</div>
+        <div class="book-card-author">Harper Lee</div>
+        <div class="book-card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-card-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780441013593-L.jpg" alt="Dune">
+          <div class="book-card-spine"></div>
+          <div class="book-card-overlay"><button class="book-card-btn">Read</button></div>
+        </div>
+        <div class="book-card-title">Dune</div>
+        <div class="book-card-author">Frank Herbert</div>
+        <div class="book-card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-card-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg" alt="Atomic Habits">
+          <div class="book-card-spine"></div>
+          <div class="book-card-overlay"><button class="book-card-btn">Read</button></div>
+        </div>
+        <div class="book-card-title">Atomic Habits</div>
+        <div class="book-card-author">James Clear</div>
+        <div class="book-card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-card-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg" alt="The Midnight Library">
+          <div class="book-card-spine"></div>
+          <div class="book-card-overlay"><button class="book-card-btn">Read</button></div>
+        </div>
+        <div class="book-card-title">The Midnight Library</div>
+        <div class="book-card-author">Matt Haig</div>
+        <div class="book-card-rating"><span class="stars">★★★★★</span><span class="rating-num">4.8</span></div>
+      </div>
+
+      <div class="book-card">
+        <div class="book-card-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780061122415-L.jpg" alt="The Alchemist">
+          <div class="book-card-spine"></div>
+          <div class="book-card-overlay"><button class="book-card-btn">Read</button></div>
+        </div>
+        <div class="book-card-title">The Alchemist</div>
+        <div class="book-card-author">Paulo Coelho</div>
+        <div class="book-card-rating"><span class="stars">★★★★☆</span><span class="rating-num">4.7</span></div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Reading Queue -->
+    <div class="sidebar-widget">
+      <div class="widget-title">Reading Queue</div>
+
+      <div class="queue-item">
+        <div class="queue-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg" alt="Sapiens">
+        </div>
+        <div class="queue-info">
+          <div class="queue-title">Sapiens</div>
+          <div class="queue-author">Yuval Noah Harari</div>
+          <div class="progress-track"><div class="progress-fill" style="width:73%;"></div></div>
+          <div class="progress-label">73% complete</div>
+        </div>
+      </div>
+
+      <div class="queue-item">
+        <div class="queue-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780061122415-L.jpg" alt="The Alchemist">
+        </div>
+        <div class="queue-info">
+          <div class="queue-title">The Alchemist</div>
+          <div class="queue-author">Paulo Coelho</div>
+          <div class="progress-track"><div class="progress-fill" style="width:41%;"></div></div>
+          <div class="progress-label">41% complete</div>
+        </div>
+      </div>
+
+      <div class="queue-item">
+        <div class="queue-cover">
+          <img src="https://covers.openlibrary.org/b/isbn/9780441013593-L.jpg" alt="Dune">
+        </div>
+        <div class="queue-info">
+          <div class="queue-title">Dune</div>
+          <div class="queue-author">Frank Herbert</div>
+          <div class="progress-track"><div class="progress-fill" style="width:12%;"></div></div>
+          <div class="progress-label">12% complete</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Categories -->
+    <div class="sidebar-widget">
+      <div class="widget-title">Browse by Genre</div>
+      <ul class="category-list">
+        <li class="category-item">
+          <div class="cat-left"><span class="cat-icon">📖</span><span class="cat-name-text">Classic Fiction</span></div>
+          <span class="cat-count-badge">321K</span>
+        </li>
+        <li class="category-item">
+          <div class="cat-left"><span class="cat-icon">🌿</span><span class="cat-name-text">Self-Help</span></div>
+          <span class="cat-count-badge">187K</span>
+        </li>
+        <li class="category-item">
+          <div class="cat-left"><span class="cat-icon">⚔️</span><span class="cat-name-text">Fantasy & Adventure</span></div>
+          <span class="cat-count-badge">298K</span>
+        </li>
+        <li class="category-item">
+          <div class="cat-left"><span class="cat-icon">🔬</span><span class="cat-name-text">Science & Nature</span></div>
+          <span class="cat-count-badge">412K</span>
+        </li>
+        <li class="category-item">
+          <div class="cat-left"><span class="cat-icon">🕊️</span><span class="cat-name-text">Biography</span></div>
+          <span class="cat-count-badge">163K</span>
+        </li>
+        <li class="category-item">
+          <div class="cat-left"><span class="cat-icon">💡</span><span class="cat-name-text">Philosophy</span></div>
+          <span class="cat-count-badge">94K</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Quote -->
+    <div class="quote-block">
+      <p class="quote-text">"A reader lives a thousand lives before he dies. The man who never reads lives only one."</p>
+      <div class="quote-source">— George R.R. Martin</div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">⚜ The Grand Library</div>
+      <p class="footer-brand-tagline">A sanctuary of stories, knowledge, and imagination — curated for those who love to read.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Explore</div>
+      <ul class="footer-links">
+        <li><a href="#">New Arrivals</a></li>
+        <li><a href="#">Bestsellers</a></li>
+        <li><a href="#">Staff Picks</a></li>
+        <li><a href="#">Reading Lists</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">The Library</div>
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Membership</a></li>
+        <li><a href="#">Donate a Book</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 The Grand Library — All volumes preserved with care.</span>
+    <span class="footer-ornament">❦</span>
+    <span class="footer-copy" style="font-style:normal;">Privacy · Terms · Accessibility</span>
+  </div>
+</footer>
+
+</body>
+</html>
